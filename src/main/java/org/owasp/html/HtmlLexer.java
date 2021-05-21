@@ -388,10 +388,18 @@ final class HtmlInputSplitter extends AbstractTokenStream {
       } else if ('"' == ch || '\'' == ch) {
         type = HtmlTokenType.QSTRING;
         int delim = ch;
+        boolean space = true;
         for (; end < limit; ++end) {
           if (input.charAt(end) == delim) {
             ++end;
             break;
+          } else {
+            int nextChar = input.charAt(end);
+            if (nextChar == '>' && space) {
+              break;
+            } else if (!Character.isWhitespace(nextChar)) {
+              space = false;
+            }
           }
         }
       } else if (!Character.isWhitespace(ch)) {
