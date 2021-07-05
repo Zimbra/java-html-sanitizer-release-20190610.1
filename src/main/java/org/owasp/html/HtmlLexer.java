@@ -395,7 +395,7 @@ final class HtmlInputSplitter extends AbstractTokenStream {
             break;
           } else {
             int nextChar = input.charAt(end);
-            if ((nextChar == '>') || (nextChar == ' ')  && space) {
+            if (nextChar == '>' && space) {
               break;
             } else if (!Character.isWhitespace(nextChar)) {
               space = false;
