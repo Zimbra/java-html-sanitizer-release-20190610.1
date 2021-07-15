@@ -248,7 +248,7 @@ public final class HtmlSanitizer {
     // We do not want to bump right up against that limit.
     // 256 is substantially larger than the lower bound and well clear of the
     // upper bound.
-    balancer.setNestingLimit(256);
+    balancer.setNestingLimit(512);
     return preprocessor.wrap(balancer);
   }
 }
