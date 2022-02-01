@@ -104,7 +104,7 @@ class ElementAndAttributePolicyBasedSanitizerPolicy
     ElementAndAttributePolicies policies = elAndAttrPolicies.get(elementName);
     String adjustedElementName = applyPolicies(elementName, attrs, policies);
     if (adjustedElementName != null
-        && !(attrs.isEmpty() && policies.skipIfEmpty)) {
+        && !(attrs.isEmpty() && policies.htmlTagSkipType.skipAvailability())) {
       writeOpenTag(policies, adjustedElementName, attrs);
       return;
     }
@@ -144,7 +144,7 @@ class ElementAndAttributePolicyBasedSanitizerPolicy
 
       adjustedElementName = policies.elPolicy.apply(elementName, attrs);
       if (adjustedElementName != null) {
-        adjustedElementName = HtmlLexer.canonicalName(adjustedElementName);
+        adjustedElementName = HtmlLexer.canonicalElementName(adjustedElementName);
       }
     } else {
       adjustedElementName = null;
