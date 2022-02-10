@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<project default='all' basedir='.' xmlns:artifact="urn:maven-artifact-ant">
+<project default='all' basedir='.' xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:artifact="urn:maven-artifact-ant">
+ <import file="../zm-zcs/ant-global.xml" />
 
  <!-- PROPERTIES -->
  <property file='build-custom.properties' />
@@ -27,12 +28,13 @@
  <property name='build.doc.dir'     value='${build.dir}/doc/javadoc' />
  <property name='build.data.dir'	value='${build.dir}/data/output' />
  <property name='build.lib.dir'     value='${build.dir}/lib' />
+ <property name='dev.version'       value='${version}z' />
  
  <property name='jar.file'         value='${build.lib.dir}/${name}-${version}z.jar'/>
  
  <target name='compile'
 		description="compiles the source"
-		unless="compile.skip">
+		unless="compile.skip" depends="build-init,resolve">
 	<mkdir dir="${build.classes.dir}"/>	
 	<echo message="Compiling the source"/>
 	<delete>
@@ -100,5 +102,9 @@
  	
  	Please install the BCEL jars into the lib/ directory. 
  	</fail>
+ </target>
+ <target name="publish-local" depends="clean-cache,jar,set-dev-version,init-ivy">
+    <copy todir="${build.dir}/" file="${jar.file}"/>
+    <ivy:publish settingsRef="dev.settings" pubrevision="${dev.version}" resolver="local" overwrite="true"/>
  </target>
 </project>
