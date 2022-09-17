@@ -237,6 +237,7 @@ public class HtmlStreamRenderer implements HtmlStreamEventReceiver {
 
   private final void writeCloseTag(String uncanonElementName)
       throws IOException {
+      int problemIndex = -1;
     if (!open) { throw new IllegalStateException(); }
     String elementName = HtmlLexer.canonicalElementName(uncanonElementName);
     if (!isValidHtmlName(elementName)) {
@@ -252,23 +253,20 @@ public class HtmlStreamRenderer implements HtmlStreamEventReceiver {
         StringBuilder cdataContent = pendingUnescaped;
         pendingUnescaped = null;
         Encoding.stripBannedCodeunits(cdataContent);
-        int problemIndex = checkHtmlCdataCloseable(lastTagOpened, cdataContent);
+        problemIndex = checkHtmlCdataCloseable(lastTagOpened, cdataContent);
         if (problemIndex == -1) {
           if (cdataContent.length() != 0) {
             output.append(cdataContent);
           }
         } else {
-          error(
-              "Invalid CDATA text content",
-              cdataContent.subSequence(
-                  problemIndex,
-                  Math.min(problemIndex + 10, cdataContent.length())));
-          // Still output the close tag.
+            //don't bother throwing exception for not getting closed tags , rather we skip rendering it in HTML
         }
       }
       if ("plaintext".equals(elementName)) { return; }
     }
-    output.append("</").append(elementName).append(">");
+    if (problemIndex == -1) {
+        output.append("</").append(elementName).append(">");
+    }
   }
 
   public final void text(String text) {
