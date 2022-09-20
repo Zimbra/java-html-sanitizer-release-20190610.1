@@ -152,7 +152,7 @@ public final class HtmlSanitizer {
           break;
         case TAGBEGIN:
           if (htmlContent.charAt(token.start + 1) == '/') {  // A close tag.
-            receiver.closeTag(HtmlLexer.canonicalName(
+            receiver.closeTag(HtmlLexer.canonicalElementName(
                 htmlContent.substring(token.start + 2, token.end)));
             while (lexer.hasNext()
                    && lexer.next().type != HtmlTokenType.TAGEND) {
@@ -173,7 +173,7 @@ public final class HtmlSanitizer {
                   } else {
                     attrsReadyForName = false;
                   }
-                  attrs.add(HtmlLexer.canonicalName(
+                  attrs.add(HtmlLexer.canonicalAttributeName(
                       htmlContent.substring(tagBodyToken.start, tagBodyToken.end)));
                   break;
                 case ATTRVALUE:
@@ -191,7 +191,7 @@ public final class HtmlSanitizer {
               attrs.add(attrs.getLast());
             }
             receiver.openTag(
-                HtmlLexer.canonicalName(
+                HtmlLexer.canonicalElementName(
                     htmlContent.substring(token.start + 1, token.end)),
                 attrs);
           }
@@ -248,7 +248,7 @@ public final class HtmlSanitizer {
     // We do not want to bump right up against that limit.
     // 256 is substantially larger than the lower bound and well clear of the
     // upper bound.
-    balancer.setNestingLimit(256);
+    balancer.setNestingLimit(512);
     return preprocessor.wrap(balancer);
   }
 }
