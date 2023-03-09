@@ -4,7 +4,7 @@
  <!-- PROPERTIES -->
  <property file='build-custom.properties' />
  
- <property name='version'   value='20190610.4'/>
+ <property name='version'   value='20190610.5'/>
  <property name='name'      value='owasp-java-html-sanitizer'/>
  <property name='fullname'  value='${name}-${version}'/>
  <property name='Title'     value='OWASP Java HTML Sanitizer'/>
