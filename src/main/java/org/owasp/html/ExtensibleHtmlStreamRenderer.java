@@ -388,7 +388,7 @@ public class ExtensibleHtmlStreamRenderer implements HtmlStreamEventReceiver {
                 }
                 break;
             case '>':
-                if (i >= 2 && sb.charAt(i - 2) == '-' && sb.charAt(i - 2) == '-') {
+                if (i >= 2 && sb.charAt(i - 2) == '-' && sb.charAt(i - 1) == '-') {
                     if (innerStart < 0) {
                         return i - 2;
                     }
