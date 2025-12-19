@@ -101,4 +101,29 @@
  	Please install the BCEL jars into the lib/ directory. 
  	</fail>
  </target>
+
+<target name="sonar-scan" depends="compile" unless="skipSonarScan" description="Run SonarQube analysis">
+
+	<property environment="env"/>
+
+	<pathconvert property="sonar.java.libraries" refid="master-classpath" pathsep=","/>
+
+	<fail message="SONAR_HOST_URL environment variable not set" unless="env.SONAR_HOST_URL"/>
+	<fail message="SONAR_TOKEN environment variable not set" unless="env.SONAR_TOKEN"/>
+
+	<echo message="Running SonarQube scan for ${fullname}"/>
+
+	<exec executable="sonar-scanner" failonerror="true">
+		<arg value="-Dsonar.projectKey=${fullname}"/>
+		<arg value="-Dsonar.projectName=${fullname}"/>
+		<arg value="-Dsonar.projectBaseDir=${basedir}"/>
+		<arg value="-Dsonar.java.source=1.8"/>
+		<arg value="-Dsonar.sources=${src.dir}/main"/>
+		<arg value="-Dsonar.java.binaries=${build.classes.dir}"/>
+		<arg value="-Dsonar.java.libraries=${sonar.java.libraries}"/>
+		<arg value="-Dsonar.tests=${src.dir}/${src.test.dir}"/>
+		<arg value="-Dsonar.host.url=${env.SONAR_HOST_URL}"/>
+		<arg value="-Dsonar.token=${env.SONAR_TOKEN}"/>
+	</exec>
+</target>
 </project>
