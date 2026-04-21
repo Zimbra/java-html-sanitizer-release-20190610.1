@@ -70,38 +70,36 @@ references:
             at: ..
 
          - run:
-            name: Publishing java-html-sanitizer jar using Nexus script
+            name: Publishing java-html-sanitizer jar..
             command: |
-               mkdir -p /home/build/.ivy2/cache
+               set -e
                sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y curl
 
-               VERSION="${BUILD_RELEASE_NO}_${CIRCLE_BUILD_NUM}"
-
-               echo "Preparing jar for publishing: $VERSION"
-
-               cd ../java-html-sanitizer-release-20190610.1/build
-
-               ORIGINAL_JAR=$(find . -name "*.jar" | head -n 1)
-
-               if [ -z "$ORIGINAL_JAR" ]; then
-                 echo "No JAR found!"
-                 exit 1
-               fi
-
+               # ===== configurable values =====
                MODULE="java-html-sanitizer"
+               BUILD_DIR="../java-html-sanitizer-release-20190610.1/build"
+               JAR_PATTERN="*.jar"
+               VERSION="${BUILD_RELEASE_NO}_${CIRCLE_BUILD_NUM}"
                TARGET_DIR="$HOME/.zcs-deps/zimbra/$MODULE"
+               # ===============================
+
+               echo "Preparing the existing JAR for upload (version: $VERSION)"
+
+               cd "$BUILD_DIR"
+
+               ORIGINAL_JAR=$(find . -type f -name "$JAR_PATTERN" | head -n 1)
+               [ -n "$ORIGINAL_JAR" ] || { echo "No JAR found!"; exit 1; }
+
                mkdir -p "$TARGET_DIR"
 
                FINAL_JAR="${MODULE}-${VERSION}.jar"
-
                mv "$ORIGINAL_JAR" "$TARGET_DIR/$FINAL_JAR"
 
-               echo "Jar prepared: $TARGET_DIR/$FINAL_JAR"
+               echo "Using previously built JAR located at: $TARGET_DIR/$FINAL_JAR"
 
                export MODULE_LIST="$MODULE"
 
                echo "Calling Nexus publish script..."
-
                bash ~/zm-nexus/scripts/publish-jars-to-nexus.sh "$HOME/.zcs-deps/zimbra"
 
                echo "Publish completed"
