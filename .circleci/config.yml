@@ -75,13 +75,17 @@ references:
                set -e
                sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y curl
 
-               # ===== configurable values =====
+               cd ../java-html-sanitizer-release-20190610.1
+
+               # Build artifact version:
+               GIT_TIMESTAMP=$(git log -1 --pretty=format:%at)
+               ARTIFACT_VERSION=$(echo "$BUILD_RELEASE_NO" | cut -d'_' -f1)
+               VERSION="${ARTIFACT_VERSION}.${GIT_TIMESTAMP}"
+
                MODULE="java-html-sanitizer"
-               BUILD_DIR="../java-html-sanitizer-release-20190610.1/build"
+               BUILD_DIR="build"
                JAR_PATTERN="*.jar"
-               VERSION="${BUILD_RELEASE_NO}_${CIRCLE_BUILD_NUM}"
                TARGET_DIR="$HOME/.zcs-deps/zimbra/$MODULE"
-               # ===============================
 
                echo "Preparing the existing JAR for upload (version: $VERSION)"
 
@@ -166,4 +170,4 @@ workflows:
             filters:
                branches:
                  only:
-                   - develop
+                   - ZCS-18832
